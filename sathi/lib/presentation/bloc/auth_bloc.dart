@@ -125,7 +125,15 @@ class AuthBloc extends Bloc<AuthEvent, AuthState> {
         emit(AuthError(message: response.data['error'] ?? 'Login failed'));
       }
     } catch (e) {
-      emit(AuthError(message: e.toString()));
+      String errorMessage = 'Login failed';
+      if (e.toString().contains('SocketException') || e.toString().contains('Connection refused')) {
+        errorMessage = 'Cannot connect to server. Make sure backend is running on port 3000';
+      } else if (e.toString().contains('timeout')) {
+        errorMessage = 'Connection timeout. Check your internet connection';
+      } else if (e.toString().contains('DioException')) {
+        errorMessage = 'Network error. Please try again';
+      }
+      emit(AuthError(message: errorMessage));
     }
   }
 
