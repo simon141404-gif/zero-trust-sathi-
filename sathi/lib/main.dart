@@ -1,10 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'core/di/injection.dart';
-import 'core/security/device_security_service.dart';
 import 'presentation/bloc/auth_bloc.dart';
 import 'presentation/screens/login_screen.dart';
-import 'presentation/screens/security_alert_screen.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -12,35 +10,14 @@ void main() async {
   // Initialize dependencies
   await initDependencies();
   
-  // Check device security (root/jailbreak detection)
-  final deviceSecurity = DeviceSecurityService();
-  final isCompromised = await deviceSecurity.checkDeviceSecurity();
-  
-  runApp(SathiApp(checkDeviceSecurity: isCompromised));
+  runApp(const SathiApp());
 }
 
 class SathiApp extends StatelessWidget {
-  final bool checkDeviceSecurity;
-  
-  const SathiApp({
-    super.key,
-    required this.checkDeviceSecurity,
-  });
+  const SathiApp({super.key});
 
   @override
   Widget build(BuildContext context) {
-    // If device is compromised, show security alert and don't run app
-    if (checkDeviceSecurity) {
-      return MaterialApp(
-        title: 'Sathi - Security Alert',
-        theme: ThemeData(
-          colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
-          useMaterial3: true,
-        ),
-        home: const SecurityAlertScreen(),
-      );
-    }
-
     return BlocProvider(
       create: (_) => getIt<AuthBloc>()..add(AuthCheckRequested()),
       child: MaterialApp(
