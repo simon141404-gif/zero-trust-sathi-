@@ -10,14 +10,40 @@ const router = express.Router();
 
 // In-memory user store (replace with database in production)
 const users = new Map();
-// Pre-create admin user
+
+// Pre-create demo users
 const adminPasswordHash = bcrypt.hashSync('admin123', 10);
+const userPasswordHash = bcrypt.hashSync('user123', 10);
+const guestPasswordHash = bcrypt.hashSync('guest123', 10);
+
 users.set('admin-user-id', {
   id: 'admin-user-id',
   username: 'admin',
   passwordHash: adminPasswordHash,
   role: ROLES.ADMIN,
   createdAt: new Date().toISOString(),
+});
+
+users.set('user-demo-id', {
+  id: 'user-demo-id',
+  username: 'user',
+  passwordHash: userPasswordHash,
+  role: ROLES.USER,
+  createdAt: new Date().toISOString(),
+});
+
+users.set('guest-demo-id', {
+  id: 'guest-demo-id',
+  username: 'guest',
+  passwordHash: guestPasswordHash,
+  role: ROLES.GUEST,
+  createdAt: new Date().toISOString(),
+});
+
+logger.info('Demo users initialized:', {
+  admin: { username: 'admin', password: 'admin123', role: 'admin' },
+  user: { username: 'user', password: 'user123', role: 'user' },
+  guest: { username: 'guest', password: 'guest123', role: 'guest' },
 });
 
 /**
